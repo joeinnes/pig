@@ -1,6 +1,6 @@
 ---
 id: pig-t6rv
-status: open
+status: in_progress
 deps: []
 links: []
 created: 2026-03-04T08:51:55Z
