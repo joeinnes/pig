@@ -1,6 +1,6 @@
 ---
 id: pig-dt61
-status: open
+status: closed
 deps: [pig-b7v7]
 links: []
 created: 2026-03-04T08:52:56Z

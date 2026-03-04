@@ -1,6 +1,6 @@
 ---
 id: pig-e8l0
-status: open
+status: closed
 deps: [pig-b7v7, pig-fvr7]
 links: []
 created: 2026-03-04T08:52:56Z

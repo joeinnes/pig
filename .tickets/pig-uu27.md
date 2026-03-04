@@ -1,6 +1,6 @@
 ---
 id: pig-uu27
-status: open
+status: closed
 deps: [pig-38ik, pig-fvr7, pig-1yvp]
 links: []
 created: 2026-03-04T08:52:23Z

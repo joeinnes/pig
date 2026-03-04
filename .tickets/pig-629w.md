@@ -1,6 +1,6 @@
 ---
 id: pig-629w
-status: open
+status: closed
 deps: [pig-qk1i]
 links: []
 created: 2026-03-04T08:53:50Z

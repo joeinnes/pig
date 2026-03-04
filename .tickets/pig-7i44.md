@@ -1,6 +1,6 @@
 ---
 id: pig-7i44
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-03-04T08:51:43Z

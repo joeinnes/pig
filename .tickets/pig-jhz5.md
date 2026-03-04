@@ -1,6 +1,6 @@
 ---
 id: pig-jhz5
-status: open
+status: closed
 deps: [pig-vehx]
 links: []
 created: 2026-03-04T08:53:30Z

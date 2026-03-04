@@ -1,6 +1,6 @@
 ---
 id: pig-dzxu
-status: open
+status: closed
 deps: [pig-t6rv]
 links: []
 created: 2026-03-04T08:53:16Z

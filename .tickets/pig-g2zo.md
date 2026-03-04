@@ -1,6 +1,6 @@
 ---
 id: pig-g2zo
-status: open
+status: closed
 deps: [pig-u1x2, pig-vehx, pig-y09t]
 links: []
 created: 2026-03-04T08:53:50Z

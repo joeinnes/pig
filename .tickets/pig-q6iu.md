@@ -1,6 +1,6 @@
 ---
 id: pig-q6iu
-status: in_progress
+status: closed
 deps: [pig-uu27, pig-k7vs, pig-jhz5]
 links: []
 created: 2026-03-04T08:53:50Z

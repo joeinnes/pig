@@ -1,6 +1,6 @@
 ---
 id: pig-wquv
-status: open
+status: closed
 deps: [pig-b7v7, pig-1ifd]
 links: []
 created: 2026-03-04T08:52:56Z
