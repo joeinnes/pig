@@ -11,9 +11,7 @@ pig surfaces these conflicts and resolves them.
 ## Install
 
 ```sh
-npm install -g pig-groomer
-# or
-pnpm add -g pig-groomer
+brew install joeinnes/tap/pig
 ```
 
 ## Quick start
