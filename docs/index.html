@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>pig — PNPM Interactive Groomer</title>
   <meta name="description" content="pig finds packages installed at multiple versions across your pnpm projects and helps you align them — interactively, strategically, and without drama.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐷</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
@@ -116,6 +117,15 @@
 
     /* ── hero ── */
     #hero { padding-top: 7rem; text-align: center; }
+
+    .hero-pig {
+      display: block;
+      font-size: 4.5rem;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+      opacity: 0.16;
+      user-select: none;
+    }
 
     #hero h1 {
       font-family: 'Playfair Display', serif;
@@ -332,6 +342,7 @@
 
     <!-- ── hero ── -->
     <section id="hero">
+      <span class="hero-pig" aria-hidden="true">🐷</span>
       <h1>Root out version<br><em>drift</em>.</h1>
       <p>
         pig finds packages installed at multiple versions across your pnpm
