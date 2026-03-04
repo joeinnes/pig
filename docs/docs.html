@@ -20,7 +20,9 @@
       --rose-light:   #f4dce6;
       --pink:         #c47888;
       --pink-light:   #f4dce2;
-      --amber:        #e8a44a;
+      --pink-bg:      rgba(196,120,136,.12);
+      --ink-bg:       var(--ink-bg);
+      --cream-nav:    rgba(249,205,216,.95);
       --border:       rgba(184,48,96,.12);
       --border-light: rgba(184,48,96,.07);
       --radius:       10px;
@@ -62,7 +64,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(249,205,216,.95);
+      background: var(--cream-nav);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-light);
@@ -142,11 +144,11 @@
       transition: background .12s, color .12s;
     }
     .sidebar-nav a:hover {
-      background: rgba(24,19,10,.06);
+      background: var(--ink-bg);
       color: var(--ink);
     }
     .sidebar-nav a.active {
-      background: rgba(196,120,136,.12);
+      background: var(--pink-bg);
       color: var(--pink);
       font-weight: 600;
     }
@@ -225,7 +227,7 @@
       line-height: 1.75;
     }
     .cmd-desc code {
-      background: rgba(24,19,10,.07);
+      background: var(--ink-bg);
       padding: 1px 5px;
       border-radius: 4px;
       font-size: 0.84em;
@@ -262,7 +264,7 @@
       color: var(--ink-mid);
     }
     .opts-table td code {
-      background: rgba(24,19,10,.07);
+      background: var(--ink-bg);
       padding: 1px 5px;
       border-radius: 4px;
       font-size: 0.84em;
@@ -314,7 +316,7 @@
       white-space: nowrap;
     }
     .strat-table td code {
-      background: rgba(24,19,10,.07);
+      background: var(--ink-bg);
       padding: 1px 5px;
       border-radius: 4px;
       font-size: 0.84em;
@@ -331,7 +333,7 @@
       margin-top: 16px;
     }
     .note code {
-      background: rgba(24,19,10,.07);
+      background: var(--ink-bg);
       padding: 1px 5px;
       border-radius: 4px;
       font-size: 0.84em;
@@ -394,7 +396,7 @@
     <header class="page-header">
       <span class="section-label">command reference</span>
       <h1>All three commands.</h1>
-      <p class="header-desc">Complete reference for every <code style="background:rgba(24,19,10,.07);padding:1px 5px;border-radius:4px;font-size:.9em">pig</code> command, flag, and config option.</p>
+      <p class="header-desc">Complete reference for every <code style="background:var(--ink-bg);padding:1px 5px;border-radius:4px;font-size:.9em">pig</code> command, flag, and config option.</p>
     </header>
 
     <!-- pig (interactive) -->
