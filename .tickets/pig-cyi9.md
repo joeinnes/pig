@@ -1,6 +1,6 @@
 ---
 id: pig-cyi9
-status: in_progress
+status: closed
 deps: [pig-t6rv]
 links: []
 created: 2026-03-04T08:51:55Z
