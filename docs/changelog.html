@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>pig — Changelog</title>
+  <meta name="description" content="Release history and notable changes for pig, the PNPM Interactive Groomer.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐷</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:        #f9cdd8;
+      --cream-card:   #fde8ee;
+      --ink:          #1a0d12;
+      --ink-mid:      #3d2030;
+      --ink-soft:     #6b4858;
+      --rose:         #b83060;
+      --rose-hover:   #96234d;
+      --pink:         #c47888;
+      --rust:         #b04040;
+      --cream-nav:    rgba(249,205,216,.95);
+      --ink-bg:       rgba(24,19,10,.07);
+      --pink-bg:      rgba(196,120,136,.12);
+      --border:       #e8c4d0;
+      --border-light: #f0d8e2;
+      --radius:       10px;
+      --shadow:       0 2px 10px rgba(26,13,18,.10), 0 1px 3px rgba(26,13,18,.07);
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── pig-patch background ── */
+    #pig-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .04;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── layout ── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--cream-nav);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 14px 0;
+    }
+    .nav-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-links .active { color: var(--ink); font-weight: 600; }
+
+    /* ── typography ── */
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    p { color: var(--ink-mid); line-height: 1.75; }
+    a { color: var(--rose); text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { color: var(--rose-hover); }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      background: var(--ink-bg);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* ── page header ── */
+    .page-header {
+      padding: 52px 0 36px;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 52px;
+    }
+    .section-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 12px;
+    }
+    .header-desc {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      margin-top: 10px;
+    }
+
+    /* ── release entries ── */
+    .release {
+      display: grid;
+      grid-template-columns: 14em 1fr;
+      gap: 0 40px;
+      padding-bottom: 52px;
+      margin-bottom: 52px;
+      border-bottom: 1px solid var(--border-light);
+      align-items: start;
+    }
+    .release:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 80px; }
+
+    .release-meta { padding-top: 3px; }
+    .release-version {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .release-date {
+      font-size: 0.76rem;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .release-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .release-tag.initial  { background: var(--pink-bg); color: var(--pink); }
+    .release-tag.feature  { background: var(--pink-bg); color: var(--pink); }
+    .release-tag.fix      { background: rgba(176,64,64,.10); color: var(--rust); }
+    .release-tag.internal { background: var(--ink-bg); color: var(--ink-soft); }
+
+    /* ── change groups ── */
+    .change-group { margin-bottom: 24px; }
+    .change-group:last-child { margin-bottom: 0; }
+    .change-group-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      display: block;
+    }
+    .change-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .change-list li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 0.86rem;
+      color: var(--ink-mid);
+      line-height: 1.7;
+    }
+    .change-list li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--border);
+    }
+    .change-list code {
+      font-size: 0.82em;
+      background: var(--ink-bg);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    .change-list .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .change-list .tag.new  { background: var(--pink-bg); color: var(--pink); }
+    .change-list .tag.fix  { background: rgba(176,64,64,.10); color: var(--rust); }
+  </style>
+</head>
+<body>
+
+<svg id="pig-bg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <pattern id="pig-spot" x="0" y="0" width="760" height="520" patternUnits="userSpaceOnUse">
+      <ellipse cx="120" cy="80"  rx="88" ry="56"  fill="#c47888" transform="rotate(-18 120 80)"/>
+      <ellipse cx="480" cy="60"  rx="60" ry="44"  fill="#c47888" transform="rotate(10 480 60)"/>
+      <ellipse cx="680" cy="140" rx="48" ry="36"  fill="#c47888" transform="rotate(-8 680 140)"/>
+      <ellipse cx="200" cy="320" rx="100" ry="62" fill="#c47888" transform="rotate(14 200 320)"/>
+      <ellipse cx="560" cy="340" rx="72" ry="50"  fill="#c47888" transform="rotate(-12 560 340)"/>
+      <ellipse cx="80"  cy="460" rx="56" ry="40"  fill="#c47888" transform="rotate(6 80 460)"/>
+      <ellipse cx="700" cy="440" rx="44" ry="34"  fill="#c47888" transform="rotate(-20 700 440)"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#pig-spot)"/>
+</svg>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">pig</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="docs.html">Docs</a></li>
+      <li><a href="changelog.html" class="active">Changelog</a></li>
+      <li><a href="https://github.com/joeinnes/pig" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <span class="section-label">release history</span>
+    <h1>Changelog</h1>
+    <p class="header-desc">Notable changes to pig, newest first.</p>
+  </header>
+
+  <!-- v0.1.0 -->
+  <div class="release" id="v0.1.0">
+    <div class="release-meta">
+      <span class="release-version">v0.1.0</span>
+      <span class="release-date">2026-03-04</span>
+      <span class="release-tag initial">initial release</span>
+    </div>
+    <div class="release-body">
+
+      <div class="change-group">
+        <span class="change-group-label">Commands</span>
+        <ul class="change-list">
+          <li><span class="tag new">new</span> <code>pig</code> — interactive grooming session with per-package strategy selection, change queue, and apply/discard confirmation</li>
+          <li><span class="tag new">new</span> <code>pig scan</code> — read-only audit; scans all configured paths and reports version conflicts without modifying any files</li>
+          <li><span class="tag new">new</span> <code>pig store</code> — prints the pnpm content-addressable store path, total size, and file count</li>
+        </ul>
+      </div>
+
+      <div class="change-group">
+        <span class="change-group-label">Strategies</span>
+        <ul class="change-list">
+          <li><span class="tag new">new</span> <code>lowest</code> — pin the lowest semver version currently in use across all projects</li>
+          <li><span class="tag new">new</span> <code>most-acceptable</code> — pick the version whose range is already satisfied by the most projects; prompts to break ties</li>
+          <li><span class="tag new">new</span> <code>project</code> — use the version installed in a specific project you choose</li>
+          <li><span class="tag new">new</span> <code>latest</code> — fetch <code>dist-tags.latest</code> from the npm registry</li>
+          <li><span class="tag new">new</span> <code>specific</code> — browse all published versions from the registry and pick one interactively</li>
+        </ul>
+      </div>
+
+      <div class="change-group">
+        <span class="change-group-label">Apply pipeline</span>
+        <ul class="change-list">
+          <li><span class="tag new">new</span> <code>package.json</code> range updater with semver-aware transformation — <code>^</code>/<code>~</code> only update when the range doesn't already satisfy the target; <code>>=</code>/<code>&lt;=</code> always update; <code>workspace:</code> and <code>*</code> are never touched</li>
+          <li><span class="tag new">new</span> validation hook — runs a configurable shell command after each <code>pnpm install</code>; reverts both <code>package.json</code> and <code>pnpm-lock.yaml</code> atomically on non-zero exit</li>
+          <li><span class="tag new">new</span> dry-run mode via <code>--dry-run</code> — prints proposed changes without writing files or running installs</li>
+        </ul>
+      </div>
+
+      <div class="change-group">
+        <span class="change-group-label">Configuration</span>
+        <ul class="change-list">
+          <li><span class="tag new">new</span> global config at <code>~/.pig/config.json</code> — <code>scanPaths</code>, <code>ignore</code>, <code>validate</code>, <code>registryUrl</code></li>
+          <li><span class="tag new">new</span> per-project override at <code>.pig.json</code> — overrides the global <code>validate</code> hook for that project only</li>
+          <li><span class="tag new">new</span> <code>--package</code> flag — focus the session on a single named package</li>
+          <li><span class="tag new">new</span> <code>--strategy</code> flag — apply a named strategy to all packages without interactive prompting</li>
+          <li><span class="tag new">new</span> <code>--paths</code> flag — override <code>scanPaths</code> for a single run</li>
+          <li><span class="tag new">new</span> <code>--validate</code> / <code>--no-validate</code> flags — override or skip the validation hook for a session</li>
+        </ul>
+      </div>
+
+      <div class="change-group">
+        <span class="change-group-label">Lockfile support</span>
+        <ul class="change-list">
+          <li><span class="tag new">new</span> pnpm lockfile v6 parser (pnpm 7/8)</li>
+          <li><span class="tag new">new</span> pnpm lockfile v9 parser (pnpm 9/10)</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
