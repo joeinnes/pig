@@ -22,18 +22,18 @@ function defaultPicker(group: VersionGroup): Promise<PackageAction> {
   const versionCount = group.versions.size
   const projectCount = [...group.versions.values()].reduce((n, u) => n + u.length, 0)
 
-  return select({
-    message: `${group.name}  (${versionCount} versions across ${projectCount} projects)`,
-    options: [
-      ...([...group.versions.keys()].map(v => ({
-        value: { type: 'select' as const, targetVersion: v },
-        label: `Align to ${v}`,
-      }))),
-      { value: 'skip' as const, label: 'Skip (keep current versions)' },
-      { value: 'defer' as const, label: 'Defer (come back later)' },
-      { value: 'quit' as const, label: 'Quit session' },
-    ],
-  }) as Promise<PackageAction>
+  type SelectValue = PackageAction
+  const options: Array<{ value: SelectValue; label: string }> = [
+    ...[...group.versions.keys()].map(v => ({
+      value: { type: 'select' as const, targetVersion: v } as SelectValue,
+      label: `Align to ${v}`,
+    })),
+    { value: 'skip' as SelectValue, label: 'Skip (keep current versions)' },
+    { value: 'defer' as SelectValue, label: 'Defer (come back later)' },
+    { value: 'quit' as SelectValue, label: 'Quit session' },
+  ]
+
+  return select({ message: `${group.name}  (${versionCount} versions across ${projectCount} projects)`, options }) as unknown as Promise<PackageAction>
 }
 
 // Build a QueuedChange for each project that uses a different version than target
