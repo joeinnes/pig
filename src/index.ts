@@ -1,6 +1,7 @@
 import { loadGlobalConfig } from './config.ts'
 import { buildSessionConfig } from './session-config.ts'
 import { runScan } from './scan.ts'
+import { runStore } from './store-command.ts'
 
 const args = process.argv.slice(2)
 const subcommand = args.find(a => !a.startsWith('-'))
@@ -76,8 +77,8 @@ switch (subcommand) {
     break
   }
   case 'store':
-    console.error('pig store: not yet implemented')
-    process.exit(1)
+    await runStore()
+    process.exit(0)
     break
   default:
     console.error(`pig: unknown command "${subcommand}"`)
