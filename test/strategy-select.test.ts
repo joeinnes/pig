@@ -22,7 +22,7 @@ function mockFetcher(versions: string[]): typeof fetch {
   const body = {
     'dist-tags': { latest: versions[0] },
     versions: Object.fromEntries(versions.map(v => [v, { dist: { unpackedSize: 1000 } }])),
-    time: Object.fromEntries(versions.map((v, i) => [v, `202${i}-01-01T00:00:00.000Z`])),
+    time: Object.fromEntries(versions.map((v, i) => [v, `${2024 - i}-01-01T00:00:00.000Z`])),
   }
   return (async () => ({ ok: true, status: 200, json: async () => body })) as unknown as typeof fetch
 }
@@ -93,8 +93,9 @@ test('versions presented newest first (fetched order preserved)', async () => {
     fetcher: mockFetcher(['18.3.0', '18.2.0', '18.1.0']),
     picker: capturePicker as never,
   })
-  // First item should be newest (18.3.0)
-  assert.ok(String(presented[0]).includes('18.3.0'), `first item should include 18.3.0, got: ${presented[0]}`)
+  // First item should be newest (18.3.0) — items are PickerItem objects
+  const first = presented[0] as { label: string; value: string }
+  assert.ok(first.value === '18.3.0', `first item value should be 18.3.0, got: ${first.value}`)
 })
 
 test('network error returns error result', async () => {
