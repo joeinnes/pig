@@ -1,6 +1,6 @@
 ---
 id: pig-y09t
-status: open
+status: in_progress
 deps: [pig-cyi9]
 links: []
 created: 2026-03-04T08:51:55Z
