@@ -1,6 +1,6 @@
 ---
 id: pig-omgq
-status: open
+status: in_progress
 deps: [pig-t6rv]
 links: []
 created: 2026-03-04T08:52:09Z
