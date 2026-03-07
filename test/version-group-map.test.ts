@@ -1,15 +1,13 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { writeFileSync, mkdirSync, rmSync } from 'node:fs'
+import { writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { buildVersionGroupMap } from '../src/version-group-map.ts'
 import type { ParsedLockfile } from '../src/lockfile/types.ts'
 
 function makeTmpDir(): string {
-  const dir = join(tmpdir(), `pig-test-${process.pid}-${Date.now()}`)
-  mkdirSync(dir, { recursive: true })
-  return dir
+  return mkdtempSync(join(tmpdir(), 'pig-test-'))
 }
 
 function makeProject(
