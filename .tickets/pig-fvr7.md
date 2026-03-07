@@ -1,6 +1,6 @@
 ---
 id: pig-fvr7
-status: in_progress
+status: closed
 deps: [pig-smmx, pig-omgq]
 links: []
 created: 2026-03-04T08:52:09Z
