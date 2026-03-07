@@ -1,3 +1,7 @@
+import { loadGlobalConfig } from './config.ts'
+import { buildSessionConfig } from './session-config.ts'
+import { runScan } from './scan.ts'
+
 const args = process.argv.slice(2)
 const subcommand = args.find(a => !a.startsWith('-'))
 
@@ -59,10 +63,18 @@ switch (subcommand) {
     showRootHelp()
     process.exit(0)
     break
-  case 'scan':
-    console.error('pig scan: not yet implemented')
-    process.exit(1)
+  case 'scan': {
+    const base = loadGlobalConfig()
+    const scanArgs = args.filter(a => a !== 'scan')
+    const config = buildSessionConfig(scanArgs, base)
+    if (config.scanPaths.length === 0) {
+      console.error('pig scan: no scan paths configured.\nAdd scanPaths to ~/.pig/config.json or pass --paths <a,b,...>')
+      process.exit(1)
+    }
+    await runScan(config)
+    process.exit(0)
     break
+  }
   case 'store':
     console.error('pig store: not yet implemented')
     process.exit(1)
