@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { strategyUpgradeToLatest } from '../src/strategy-latest.ts'
+import { strategyUpgradeToLatest, clearStrategyLatestCache } from '../src/strategy-latest.ts'
 import type { VersionGroup } from '../src/version-group-map.ts'
 
 function makeGroup(
@@ -42,6 +42,7 @@ function notFoundFetcher(): typeof fetch {
 }
 
 test('uses dist-tags.latest as target version', async () => {
+  clearStrategyLatestCache()
   const group = makeGroup('react', [
     { root: '/a', version: '18.2.0', range: '^18.0.0' },
   ])
@@ -53,6 +54,7 @@ test('uses dist-tags.latest as target version', async () => {
 })
 
 test('requiresNetwork is true', async () => {
+  clearStrategyLatestCache()
   const group = makeGroup('react', [
     { root: '/a', version: '18.2.0' },
   ])
@@ -61,6 +63,7 @@ test('requiresNetwork is true', async () => {
 })
 
 test('alignmentCost computed correctly', async () => {
+  clearStrategyLatestCache()
   const group = makeGroup('react', [
     { root: '/a', version: '18.2.0', range: '^18.0.0' }, // covers 18.3.1
     { root: '/b', version: '17.0.2', range: '^17.0.0' }, // does NOT cover 18.3.1
@@ -73,6 +76,7 @@ test('alignmentCost computed correctly', async () => {
 })
 
 test('network error surfaces as user-friendly error result', async () => {
+  clearStrategyLatestCache()
   const group = makeGroup('react', [{ root: '/a', version: '18.2.0' }])
   const result = await strategyUpgradeToLatest(group, REGISTRY, { fetcher: errorFetcher() })
   assert.equal(result.type, 'error')
@@ -82,6 +86,7 @@ test('network error surfaces as user-friendly error result', async () => {
 })
 
 test('HTTP error surfaces as user-friendly error result', async () => {
+  clearStrategyLatestCache()
   const group = makeGroup('react', [{ root: '/a', version: '18.2.0' }])
   const result = await strategyUpgradeToLatest(group, REGISTRY, { fetcher: notFoundFetcher() })
   assert.equal(result.type, 'error')
