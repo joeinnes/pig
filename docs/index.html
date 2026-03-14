@@ -10,28 +10,29 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream:        #f5f0e5;
-      --cream-card:   #faf7f0;
-      --ink:          #18130a;
-      --ink-mid:      #3d3020;
-      --ink-soft:     #6b5d48;
-      --green:        #3a6b35;
-      --green-hover:  #2e5529;
+      --cream:        #f9cdd8;
+      --cream-card:   #fde8ee;
+      --ink:          #1a0d12;
+      --ink-mid:      #3d2030;
+      --ink-soft:     #6b4858;
+      --rose:         #b83060;
+      --rose-hover:   #96234d;
+      --positive:     #3a7030;
       --rust:         #b04040;
       --amber:        #c47820;
       --pink:         #c47888;
-      --border:       #ccc1a8;
-      --border-light: #ddd5be;
-      --term-bg:      #1b1814;
-      --term-fg:      #ddd5be;
+      --border:       #e8c4d0;
+      --border-light: #f0d8e2;
+      --term-bg:      #1a0d12;
+      --term-fg:      #f0d8e8;
       --term-green:   #8bc88b;
       --term-yellow:  #d4b96a;
-      --term-pink:    #e09898;
-      --term-dim:     #7a7060;
-      --term-prompt:  #e8a44a;
+      --term-pink:    #f09ab0;
+      --term-dim:     #8a6070;
+      --term-prompt:  #e88aaa;
       --radius:       10px;
-      --shadow:       0 2px 10px rgba(24,19,10,.10), 0 1px 3px rgba(24,19,10,.07);
-      --shadow-lg:    0 8px 32px rgba(24,19,10,.14), 0 2px 8px rgba(24,19,10,.08);
+      --shadow:       0 2px 10px rgba(26,13,18,.10), 0 1px 3px rgba(26,13,18,.07);
+      --shadow-lg:    0 8px 32px rgba(26,13,18,.14), 0 2px 8px rgba(26,13,18,.08);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,7 +65,7 @@
     nav {
       position: sticky;
       top: 0;
-      background: rgba(245,240,229,.92);
+      background: rgba(249,205,216,.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       padding: .75rem 2rem;
@@ -89,11 +90,11 @@
       transition: color .15s;
     }
 
-    nav a:hover { color: var(--green); }
+    nav a:hover { color: var(--rose); }
 
     .nav-install {
       margin-left: auto;
-      background: var(--green);
+      background: var(--rose);
       color: #fff !important;
       padding: .4rem 1rem;
       border-radius: var(--radius);
@@ -101,7 +102,7 @@
       transition: background .15s;
     }
 
-    .nav-install:hover { background: var(--green-hover) !important; }
+    .nav-install:hover { background: var(--rose-hover) !important; }
 
     /* ── sections ── */
     section {
@@ -157,11 +158,11 @@
     .btn:active { transform: scale(.97); }
 
     .btn-primary {
-      background: var(--green);
+      background: var(--rose);
       color: #fff;
     }
 
-    .btn-primary:hover { background: var(--green-hover); }
+    .btn-primary:hover { background: var(--rose-hover); }
 
     .btn-secondary {
       background: transparent;
@@ -204,6 +205,7 @@
       overflow-x: auto;
       box-shadow: var(--shadow-lg);
       margin: 1.75rem 0;
+      text-align: left;
     }
 
     .term pre {
@@ -265,7 +267,7 @@
 
     td:not(:first-child) { text-align: center; }
 
-    .yes { color: var(--green); font-weight: 600; }
+    .yes { color: var(--positive); font-weight: 600; }
     .no  { color: var(--rust); }
     .meh { color: var(--amber); }
 

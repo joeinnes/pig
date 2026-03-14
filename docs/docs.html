@@ -11,28 +11,28 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream:        #f5f0e5;
-      --cream-card:   #faf7f0;
-      --ink:          #18130a;
-      --ink-mid:      #3d3020;
-      --ink-soft:     #6b5740;
-      --green:        #3a6b35;
-      --green-light:  #d4e8d0;
+      --cream:        #f9cdd8;
+      --cream-card:   #fde8ee;
+      --ink:          #1a0d12;
+      --ink-mid:      #3d2030;
+      --ink-soft:     #6b4858;
+      --rose:         #b83060;
+      --rose-light:   #f4dce6;
       --pink:         #c47888;
       --pink-light:   #f4dce2;
       --amber:        #e8a44a;
-      --border:       rgba(24,19,10,.12);
-      --border-light: rgba(24,19,10,.08);
+      --border:       rgba(184,48,96,.12);
+      --border-light: rgba(184,48,96,.07);
       --radius:       10px;
-      --shadow:       0 2px 10px rgba(24,19,10,.10), 0 1px 3px rgba(24,19,10,.07);
+      --shadow:       0 2px 10px rgba(26,13,18,.10), 0 1px 3px rgba(26,13,18,.07);
 
       /* terminal colours */
-      --term-bg:      #1e1a13;
-      --term-fg:      #e8e0cc;
+      --term-bg:      #1a0d12;
+      --term-fg:      #f0d8e8;
       --term-green:   #7ec87a;
       --term-yellow:  #e8c97a;
-      --term-pink:    #e89aaa;
-      --term-dim:     #7a6e5e;
+      --term-pink:    #f09ab0;
+      --term-dim:     #8a6070;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,7 +62,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(245,240,229,.92);
+      background: rgba(249,205,216,.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-light);
@@ -322,8 +322,8 @@
 
     /* ── note/tip callout ── */
     .note {
-      background: var(--green-light);
-      border-left: 3px solid var(--green);
+      background: var(--rose-light);
+      border-left: 3px solid var(--rose);
       border-radius: 0 var(--radius) var(--radius) 0;
       padding: 12px 16px;
       font-size: 0.84rem;
