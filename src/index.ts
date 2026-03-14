@@ -1,7 +1,17 @@
+import { join } from 'node:path'
 import { loadGlobalConfig } from './config.ts'
 import { buildSessionConfig } from './session-config.ts'
 import { runScan } from './scan.ts'
 import { runStore } from './store-command.ts'
+import { walkScanPaths } from './scan-walker.ts'
+import { parseLockfile } from './lockfile/index.ts'
+import { buildVersionGroupMap } from './version-group-map.ts'
+import { runPackageListSession } from './tui-list.ts'
+import { showPackageDetail } from './tui-detail.ts'
+import { applyChanges } from './apply-pipeline.ts'
+import { updatePackageJsonRange } from './pkg-updater.ts'
+import { runPnpmInstall } from './install-runner.ts'
+import { runValidationHook } from './validation-hook.ts'
 
 const args = process.argv.slice(2)
 const subcommand = args.find(a => !a.startsWith('-'))
@@ -48,7 +58,7 @@ Options:
 }
 
 if (args.includes('--version') || args.includes('-v')) {
-  console.log('0.1.1')
+  console.log('0.1.2')
   process.exit(0)
 }
 
@@ -60,10 +70,50 @@ if (args.includes('--help') || args.includes('-h') || args[0] === 'help') {
 }
 
 switch (subcommand) {
-  case undefined:
-    showRootHelp()
+  case undefined: {
+    const base = loadGlobalConfig()
+    const config = buildSessionConfig(args, base)
+    if (config.scanPaths.length === 0) {
+      console.error('pig: no scan paths configured.\nAdd scanPaths to ~/.pig/config.json or pass --paths <a,b,...>')
+      process.exit(1)
+    }
+
+    const discovered = await walkScanPaths(config.scanPaths, config.ignore)
+    const lockfiles = await Promise.all(discovered.map(d => parseLockfile(d.lockfilePath)))
+    const versionGroupMap = buildVersionGroupMap(lockfiles)
+
+    if (versionGroupMap.size === 0) {
+      console.log('No version conflicts found.')
+      process.exit(0)
+    }
+
+    const { queue, quit } = await runPackageListSession(versionGroupMap, {
+      picker: (group) => showPackageDetail(group, {
+        registryUrl: config.registryUrl,
+        write: console.log,
+      }),
+    })
+
+    if (queue.length === 0) {
+      console.log(quit ? 'Session ended.' : 'No changes queued.')
+      process.exit(0)
+    }
+
+    await applyChanges(queue, {
+      dryRun: config.dryRun,
+      hookCmd: config.validate,
+      updater: (projectRoot, packageName, targetVersion) =>
+        updatePackageJsonRange(join(projectRoot, 'package.json'), packageName, targetVersion),
+      installer: (projectRoot) =>
+        runPnpmInstall(projectRoot),
+      validator: (projectRoot, hookCmd, pkgSnapshot, lockSnapshot) =>
+        runValidationHook({ projectRoot, hookCmd, pkgSnapshot, lockSnapshot }),
+      write: console.log,
+    })
+
     process.exit(0)
     break
+  }
   case 'scan': {
     const base = loadGlobalConfig()
     const scanArgs = args.filter(a => a !== 'scan')
