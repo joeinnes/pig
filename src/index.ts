@@ -48,7 +48,7 @@ Options:
 }
 
 if (args.includes('--version') || args.includes('-v')) {
-  console.log('0.1.0')
+  console.log('0.1.1')
   process.exit(0)
 }
 

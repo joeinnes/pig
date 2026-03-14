@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>pig — Changelog</title>
   <meta name="description" content="Release history and notable changes for pig, the PNPM Interactive Groomer.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐷</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐖</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
@@ -269,6 +269,34 @@
     <h1>Changelog</h1>
     <p class="header-desc">Notable changes to pig, newest first.</p>
   </header>
+
+  <!-- v0.1.1 -->
+  <div class="release" id="v0.1.1">
+    <div class="release-meta">
+      <span class="release-version">v0.1.1</span>
+      <span class="release-date">2026-03-07</span>
+      <span class="release-tag fix">patch</span>
+    </div>
+    <div class="release-body">
+
+      <div class="change-group">
+        <span class="change-group-label">Interactive session</span>
+        <ul class="change-list">
+          <li><span class="tag fix">fix</span> <code>pig</code> with no arguments now launches the interactive grooming session instead of printing help and exiting</li>
+          <li><span class="tag new">new</span> wired <code>runPackageListSession</code> to <code>showPackageDetail</code> as the per-package picker, connecting the list TUI to the full strategy/detail flow</li>
+          <li><span class="tag new">new</span> applied changes are now written to disk via the real <code>updatePackageJsonRange</code>, <code>runPnpmInstall</code>, and <code>runValidationHook</code> implementations</li>
+        </ul>
+      </div>
+
+      <div class="change-group">
+        <span class="change-group-label">Docs</span>
+        <ul class="change-list">
+          <li>Updated homepage and changelog favicon and logo to full-body pig 🐖</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
 
   <!-- v0.1.0 -->
   <div class="release" id="v0.1.0">
