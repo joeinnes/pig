@@ -1,6 +1,6 @@
 ---
 id: pig-u1x2
-status: open
+status: closed
 deps: [pig-uu27, pig-qk1i]
 links: []
 created: 2026-03-04T08:53:30Z

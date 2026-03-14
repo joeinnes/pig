@@ -1,6 +1,6 @@
 ---
 id: pig-38ik
-status: in_progress
+status: closed
 deps: [pig-cyi9]
 links: []
 created: 2026-03-04T08:52:23Z

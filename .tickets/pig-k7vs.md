@@ -1,6 +1,6 @@
 ---
 id: pig-k7vs
-status: open
+status: closed
 deps: [pig-t6rv]
 links: []
 created: 2026-03-04T08:52:38Z

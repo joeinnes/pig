@@ -1,6 +1,6 @@
 ---
 id: pig-1yvp
-status: open
+status: closed
 deps: [pig-fvr7]
 links: []
 created: 2026-03-04T08:52:23Z
