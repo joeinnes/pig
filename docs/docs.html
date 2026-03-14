@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>pig — Command Reference</title>
+  <meta name="description" content="Complete command reference for pig, the PNPM Interactive Groomer.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐷</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:        #f5f0e5;
+      --cream-card:   #faf7f0;
+      --ink:          #18130a;
+      --ink-mid:      #3d3020;
+      --ink-soft:     #6b5740;
+      --green:        #3a6b35;
+      --green-light:  #d4e8d0;
+      --pink:         #c47888;
+      --pink-light:   #f4dce2;
+      --amber:        #e8a44a;
+      --border:       rgba(24,19,10,.12);
+      --border-light: rgba(24,19,10,.08);
+      --radius:       10px;
+      --shadow:       0 2px 10px rgba(24,19,10,.10), 0 1px 3px rgba(24,19,10,.07);
+
+      /* terminal colours */
+      --term-bg:      #1e1a13;
+      --term-fg:      #e8e0cc;
+      --term-green:   #7ec87a;
+      --term-yellow:  #e8c97a;
+      --term-pink:    #e89aaa;
+      --term-dim:     #7a6e5e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── pig-patch background ── */
+    #pig-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .04;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245,240,229,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 14px 0;
+    }
+    .nav-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links .active { color: var(--ink); font-weight: 600; }
+
+    /* ── layout ── */
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0 56px;
+      align-items: start;
+    }
+
+    /* ── sidebar ── */
+    .sidebar {
+      position: sticky;
+      top: 72px;
+      padding: 52px 0 80px;
+    }
+    .sidebar-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-nav a {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: background .12s, color .12s;
+    }
+    .sidebar-nav a:hover {
+      background: rgba(24,19,10,.06);
+      color: var(--ink);
+    }
+    .sidebar-nav a.active {
+      background: rgba(196,120,136,.12);
+      color: var(--pink);
+      font-weight: 600;
+    }
+    .sidebar-divider {
+      border: none;
+      border-top: 1px solid var(--border-light);
+      margin: 14px 10px;
+    }
+
+    /* ── main content ── */
+    main {
+      padding: 52px 0 80px;
+    }
+
+    /* ── page header ── */
+    .page-header {
+      margin-bottom: 52px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .section-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    .header-desc {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      margin-top: 12px;
+    }
+
+    /* ── command blocks ── */
+    .cmd-block {
+      margin-bottom: 52px;
+      padding-bottom: 52px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .cmd-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .cmd-sig {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .cmd-sig code {
+      background: var(--pink-light);
+      color: var(--ink-mid);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-top: 4px;
+    }
+
+    .cmd-desc {
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+      margin-bottom: 20px;
+      line-height: 1.75;
+    }
+    .cmd-desc code {
+      background: rgba(24,19,10,.07);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+    }
+    p.cmd-desc + p.cmd-desc { margin-top: -8px; }
+
+    /* ── options table ── */
+    .opts-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin-bottom: 20px;
+    }
+    .opts-table th {
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .opts-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+    .opts-table tr:last-child td { border-bottom: none; }
+    .opts-table td:first-child {
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+    }
+    .opts-table td code {
+      background: rgba(24,19,10,.07);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+    }
+
+    /* ── code blocks ── */
+    .code-block {
+      background: var(--term-bg);
+      color: var(--term-fg);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-size: 0.84rem;
+      line-height: 1.65;
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    .code-block .c  { color: var(--term-dim); font-style: italic; }
+    .code-block .k  { color: var(--term-yellow); }
+    .code-block .s  { color: var(--term-green); }
+    .code-block .p  { color: var(--term-pink); }
+
+    /* ── strategy table ── */
+    .strat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin-top: 16px;
+    }
+    .strat-table th {
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .strat-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+    .strat-table tr:last-child td { border-bottom: none; }
+    .strat-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--pink);
+      white-space: nowrap;
+    }
+    .strat-table td code {
+      background: rgba(24,19,10,.07);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+    }
+
+    /* ── note/tip callout ── */
+    .note {
+      background: var(--green-light);
+      border-left: 3px solid var(--green);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 12px 16px;
+      font-size: 0.84rem;
+      color: var(--ink-mid);
+      margin-top: 16px;
+    }
+    .note code {
+      background: rgba(24,19,10,.07);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+    }
+
+    @media (max-width: 700px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── pig-patch background SVG ── -->
+<svg id="pig-bg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <ellipse cx="8%" cy="12%" rx="5%" ry="3.5%" fill="#c47888" transform="rotate(-18,80,120)"/>
+  <ellipse cx="72%" cy="7%" rx="4%" ry="2.8%" fill="#c47888" transform="rotate(12,720,70)"/>
+  <ellipse cx="91%" cy="28%" rx="3.5%" ry="5.5%" fill="#c47888" transform="rotate(30,910,280)"/>
+  <ellipse cx="18%" cy="45%" rx="6%" ry="3%" fill="#c47888" transform="rotate(-10,180,450)"/>
+  <ellipse cx="55%" cy="35%" rx="4.5%" ry="3%" fill="#c47888" transform="rotate(22,550,350)"/>
+  <ellipse cx="80%" cy="58%" rx="5%" ry="3.5%" fill="#c47888" transform="rotate(-15,800,580)"/>
+  <ellipse cx="35%" cy="70%" rx="3.5%" ry="5%" fill="#c47888" transform="rotate(8,350,700)"/>
+  <ellipse cx="62%" cy="82%" rx="6%" ry="3.2%" fill="#c47888" transform="rotate(-25,620,820)"/>
+  <ellipse cx="10%" cy="85%" rx="4%" ry="2.8%" fill="#c47888" transform="rotate(15,100,850)"/>
+  <ellipse cx="88%" cy="90%" rx="5.5%" ry="3%" fill="#c47888" transform="rotate(-8,880,900)"/>
+</svg>
+
+<!-- ── nav ── -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">pig</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="docs.html" class="active">Docs</a></li>
+      <li><a href="https://github.com/joeinnes/pig" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── page ── -->
+<div class="page-wrap">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <span class="sidebar-label">Commands</span>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li><a href="#cmd-pig">pig</a></li>
+      <li><a href="#cmd-scan">pig scan</a></li>
+      <li><a href="#cmd-store">pig store</a></li>
+      <hr class="sidebar-divider">
+      <li><a href="#cmd-strategies">Strategies</a></li>
+      <li><a href="#cmd-config">Config</a></li>
+      <li><a href="#cmd-pigrc">~/.pig/config.json</a></li>
+      <li><a href="#cmd-pigjson">.pig.json</a></li>
+    </ul>
+  </aside>
+
+  <!-- main -->
+  <main>
+    <header class="page-header">
+      <span class="section-label">command reference</span>
+      <h1>All three commands.</h1>
+      <p class="header-desc">Complete reference for every <code style="background:rgba(24,19,10,.07);padding:1px 5px;border-radius:4px;font-size:.9em">pig</code> command, flag, and config option.</p>
+    </header>
+
+    <!-- pig (interactive) -->
+    <div class="cmd-block" id="cmd-pig">
+      <h3 class="cmd-sig"><code>pig [OPTIONS]</code></h3>
+      <p class="cmd-desc">Launch an interactive grooming session. pig scans your configured paths, groups packages by name across all projects, and guides you through each conflict one at a time.</p>
+      <p class="cmd-desc">For each package that appears at multiple versions, you choose a resolution strategy. Approved changes are queued and written atomically at the end of the session. A confirmation prompt lets you review or discard the full queue before anything is touched.</p>
+      <table class="opts-table">
+        <thead><tr><th>Option</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>--package &lt;name&gt;</code></td>
+            <td>Focus the session on a single package; all others are skipped</td>
+          </tr>
+          <tr>
+            <td><code>--strategy &lt;name&gt;</code></td>
+            <td>Apply a named strategy to every package without interactive prompting. One of: <code>lowest</code>, <code>most-acceptable</code>, <code>project</code>, <code>latest</code>, <code>specific</code></td>
+          </tr>
+          <tr>
+            <td><code>--dry-run</code></td>
+            <td>Print proposed <code>package.json</code> changes without writing any files or running <code>pnpm install</code></td>
+          </tr>
+          <tr>
+            <td><code>--validate &lt;cmd&gt;</code></td>
+            <td>Override the validation hook for this session only. The command is run after each project's <code>pnpm install</code>; a non-zero exit reverts that project's changes</td>
+          </tr>
+          <tr>
+            <td><code>--no-validate</code></td>
+            <td>Skip all validation hooks for this session</td>
+          </tr>
+          <tr>
+            <td><code>--paths &lt;a,b,...&gt;</code></td>
+            <td>Override the configured <code>scanPaths</code> for this session; comma-separated glob patterns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="c"># interactive session, all configured paths</span>
+<span class="p">$</span> pig
+
+<span class="c"># focus on a single package with pre-selected strategy</span>
+<span class="p">$</span> pig --package react --strategy latest
+
+<span class="c"># dry run — see what would change, write nothing</span>
+<span class="p">$</span> pig --dry-run</div>
+    </div>
+
+    <!-- pig scan -->
+    <div class="cmd-block" id="cmd-scan">
+      <h3 class="cmd-sig"><code>pig scan [OPTIONS]</code></h3>
+      <p class="cmd-desc">Scan all configured paths and print a version-conflict report. No files are modified. Exits 0 when the report is complete regardless of whether conflicts were found.</p>
+      <p class="cmd-desc">For each package that appears at more than one version, pig prints the versions in use and which projects reference each one. Unique packages (only one version across all projects) are summarised in a single line.</p>
+      <table class="opts-table">
+        <thead><tr><th>Option</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>--paths &lt;a,b,...&gt;</code></td>
+            <td>Override the configured <code>scanPaths</code> for this run; comma-separated glob patterns</td>
+          </tr>
+          <tr>
+            <td><code>--dry-run</code></td>
+            <td>Alias accepted; has no additional effect in scan mode (scan is already read-only)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="p">$</span> pig scan
+<span class="k">Scanning 3 paths...</span>
+
+<span class="s">react</span>          <span class="c">2 versions</span>
+  <span class="k">18.3.1</span>        apps/dashboard, apps/admin
+  <span class="k">17.0.2</span>        packages/legacy-widget
+
+<span class="s">lodash</span>         <span class="c">2 versions</span>
+  <span class="k">4.17.21</span>       apps/dashboard
+  <span class="k">4.16.0</span>        packages/utils
+
+<span class="c">47 packages at a single version. 2 conflicts found.</span></div>
+    </div>
+
+    <!-- pig store -->
+    <div class="cmd-block" id="cmd-store">
+      <h3 class="cmd-sig"><code>pig store</code></h3>
+      <p class="cmd-desc">Print a summary of the local pnpm content-addressable store: its path, total size on disk, and number of stored files.</p>
+      <p class="cmd-desc">The store path is resolved via <code>pnpm store path</code> unless overridden. Useful for a quick sanity-check before running <code>pnpm store prune</code>.</p>
+      <div class="code-block"><span class="p">$</span> pig store
+<span class="k">Store path:</span>  /Users/joe/.local/share/pnpm/store/v10
+<span class="k">Size:</span>        4.2 GB
+<span class="k">Files:</span>       312,847</div>
+    </div>
+
+    <!-- strategies -->
+    <div class="cmd-block" id="cmd-strategies">
+      <h2>Strategies</h2>
+      <p class="cmd-desc">A strategy is how pig decides which version to pin for a conflicting package. Strategies can be applied interactively (you choose per-package) or globally via <code>--strategy &lt;name&gt;</code>.</p>
+      <table class="strat-table">
+        <thead><tr><th>Name</th><th>How it works</th><th>Network?</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>lowest</td>
+            <td>Pin the lowest semver version currently in use across all projects. Safest for compatibility.</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>most-acceptable</td>
+            <td>Pick the version whose semver range is already satisfied by the most projects. Minimises the number of <code>package.json</code> edits needed.</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>project</td>
+            <td>Use the version installed in a specific project you choose. Useful when one project is the source of truth.</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>latest</td>
+            <td>Fetch <code>dist-tags.latest</code> from the npm registry and upgrade all projects to that version.</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>specific</td>
+            <td>Browse all published versions from the registry and pick one interactively. Versions are sorted newest-first.</td>
+            <td>Yes</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">When <code>most-acceptable</code> results in a tie (two versions satisfy an equal number of ranges), pig prompts you to break the tie interactively.</div>
+    </div>
+
+    <!-- config overview -->
+    <div class="cmd-block" id="cmd-config">
+      <h2>Configuration</h2>
+      <p class="cmd-desc">pig reads configuration from two places: a global user config at <code>~/.pig/config.json</code> and an optional per-project override file at <code>&lt;projectRoot&gt;/.pig.json</code>.</p>
+      <p class="cmd-desc">Per-project settings take precedence over the global config for that project only. All fields are optional.</p>
+    </div>
+
+    <!-- global config -->
+    <div class="cmd-block" id="cmd-pigrc">
+      <h3 class="cmd-sig"><code>~/.pig/config.json</code> — global config</h3>
+      <p class="cmd-desc">Created automatically on first run if absent. Controls which project trees pig scans, which paths to ignore, and how to reach the npm registry.</p>
+      <table class="opts-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>scanPaths</code></td>
+            <td>string[]</td>
+            <td>Glob patterns or absolute paths to scan for <code>pnpm-lock.yaml</code> files. Supports <code>~/</code> expansion. Required — pig exits with an error if empty.</td>
+          </tr>
+          <tr>
+            <td><code>ignore</code></td>
+            <td>string[]</td>
+            <td>Glob patterns to exclude from scanning. Defaults to <code>["**/node_modules/**"]</code>.</td>
+          </tr>
+          <tr>
+            <td><code>validate</code></td>
+            <td>string</td>
+            <td>Shell command run after each project's <code>pnpm install</code>. A non-zero exit reverts that project's changes. Example: <code>"pnpm test"</code>.</td>
+          </tr>
+          <tr>
+            <td><code>registryUrl</code></td>
+            <td>string</td>
+            <td>npm-compatible registry URL for <code>latest</code> and <code>specific</code> strategies. Defaults to <code>"https://registry.npmjs.org"</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="k">{</span>
+  <span class="s">"scanPaths"</span><span class="k">:</span> [
+    <span class="s">"~/WebDev/work"</span><span class="k">,</span>
+    <span class="s">"~/WebDev/personal"</span>
+  ]<span class="k">,</span>
+  <span class="s">"ignore"</span><span class="k">:</span> [<span class="s">"**/node_modules/**"</span><span class="k">,</span> <span class="s">"**/dist/**"</span>]<span class="k">,</span>
+  <span class="s">"validate"</span><span class="k">:</span> <span class="s">"pnpm run typecheck"</span><span class="k">,</span>
+  <span class="s">"registryUrl"</span><span class="k">:</span> <span class="s">"https://registry.npmjs.org"</span>
+<span class="k">}</span></div>
+    </div>
+
+    <!-- per-project config -->
+    <div class="cmd-block" id="cmd-pigjson">
+      <h3 class="cmd-sig"><code>.pig.json</code> — per-project override</h3>
+      <p class="cmd-desc">Add a <code>.pig.json</code> to the root of any project (next to its <code>pnpm-lock.yaml</code>) to override the global validation hook for that project only.</p>
+      <p class="cmd-desc">If a project's post-install checks differ from your global default — for example a project that needs a lighter-weight check — set it here rather than adjusting the global config.</p>
+      <table class="opts-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>validate</code></td>
+            <td>string</td>
+            <td>Shell command to run after <code>pnpm install</code> for this project. Overrides the global <code>validate</code> setting. Set to an empty string to disable validation for this project.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="k">{</span>
+  <span class="c">// lighter check for this project only</span>
+  <span class="s">"validate"</span><span class="k">:</span> <span class="s">"pnpm run build --dry-run"</span>
+<span class="k">}</span></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // highlight active sidebar link based on scroll position
+  const headings = document.querySelectorAll('.cmd-block[id]')
+  const links = document.querySelectorAll('#sidebar-nav a[href^="#"]')
+
+  function getActive() {
+    const scrollY = window.scrollY + 100
+    let active = null
+    for (const el of headings) {
+      if (el.offsetTop <= scrollY) active = el.id
+    }
+    return active
+  }
+
+  function updateActive() {
+    const active = getActive()
+    for (const a of links) {
+      a.classList.toggle('active', a.getAttribute('href') === `#${active}`)
+    }
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true })
+  updateActive()
+</script>
+</body>
+</html>

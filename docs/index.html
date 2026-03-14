@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>pig — PNPM Interactive Groomer</title>
+  <meta name="description" content="pig finds packages installed at multiple versions across your pnpm projects and helps you align them — interactively, strategically, and without drama.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:        #f5f0e5;
+      --cream-card:   #faf7f0;
+      --ink:          #18130a;
+      --ink-mid:      #3d3020;
+      --ink-soft:     #6b5d48;
+      --green:        #3a6b35;
+      --green-hover:  #2e5529;
+      --rust:         #b04040;
+      --amber:        #c47820;
+      --pink:         #c47888;
+      --border:       #ccc1a8;
+      --border-light: #ddd5be;
+      --term-bg:      #1b1814;
+      --term-fg:      #ddd5be;
+      --term-green:   #8bc88b;
+      --term-yellow:  #d4b96a;
+      --term-pink:    #e09898;
+      --term-dim:     #7a7060;
+      --term-prompt:  #e8a44a;
+      --radius:       10px;
+      --shadow:       0 2px 10px rgba(24,19,10,.10), 0 1px 3px rgba(24,19,10,.07);
+      --shadow-lg:    0 8px 32px rgba(24,19,10,.14), 0 2px 8px rgba(24,19,10,.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── pig-patch background ── */
+    #pig-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .045;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main { position: relative; z-index: 1; }
+
+    /* ── nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(245,240,229,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    nav a {
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: .8rem;
+      transition: color .15s;
+    }
+
+    nav a:hover { color: var(--green); }
+
+    .nav-install {
+      margin-left: auto;
+      background: var(--green);
+      color: #fff !important;
+      padding: .4rem 1rem;
+      border-radius: var(--radius);
+      font-size: .8rem;
+      transition: background .15s;
+    }
+
+    .nav-install:hover { background: var(--green-hover) !important; }
+
+    /* ── sections ── */
+    section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    section + section { padding-top: 0; }
+
+    /* ── hero ── */
+    #hero { padding-top: 7rem; text-align: center; }
+
+    #hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+    }
+
+    #hero h1 em {
+      font-style: italic;
+      color: var(--pink);
+    }
+
+    #hero p {
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: .65rem 1.5rem;
+      border-radius: var(--radius);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s, transform .1s;
+    }
+
+    .btn:active { transform: scale(.97); }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--green-hover); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover { border-color: var(--ink-soft); }
+
+    /* ── section headings ── */
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ink-mid);
+      margin-bottom: .5rem;
+    }
+
+    p {
+      color: var(--ink-soft);
+      margin-bottom: 1rem;
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    /* ── terminal block ── */
+    .term {
+      background: var(--term-bg);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      overflow-x: auto;
+      box-shadow: var(--shadow-lg);
+      margin: 1.75rem 0;
+    }
+
+    .term pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      line-height: 1.65;
+      color: var(--term-fg);
+      white-space: pre;
+    }
+
+    .term .prompt { color: var(--term-prompt); }
+    .term .cmd    { color: var(--term-fg); }
+    .term .out    { color: var(--term-dim); }
+    .term .hi     { color: var(--term-green); }
+    .term .warn   { color: var(--term-yellow); }
+    .term .pkg    { color: var(--term-pink); }
+    .term .dim    { color: var(--term-dim); }
+
+    /* ── card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--cream-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: .75rem;
+    }
+
+    /* ── comparison table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: .85rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: .6rem .9rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--cream-card);
+      font-weight: 600;
+      color: var(--ink-mid);
+    }
+
+    td:not(:first-child) { text-align: center; }
+
+    .yes { color: var(--green); font-weight: 600; }
+    .no  { color: var(--rust); }
+    .meh { color: var(--amber); }
+
+    /* ── inline code ── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88em;
+      background: rgba(24,19,10,.06);
+      border-radius: 4px;
+      padding: .1em .3em;
+      color: var(--ink-mid);
+    }
+
+    /* ── install section ── */
+    #install { text-align: center; }
+
+    #install h2 { margin-bottom: .5rem; }
+
+    #install > p { max-width: 480px; margin: 0 auto 2rem; }
+
+    /* ── footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2rem;
+      font-size: .78rem;
+      color: var(--ink-soft);
+    }
+
+    footer a { color: var(--ink-soft); }
+  </style>
+</head>
+<body>
+
+  <!-- pig-spot background: irregular blobs, pig-pink on cream -->
+  <svg id="pig-bg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="pig-spot" x="0" y="0" width="760" height="520" patternUnits="userSpaceOnUse">
+        <ellipse cx="120" cy="80"  rx="88" ry="56"  fill="#c47888" transform="rotate(-18 120 80)"/>
+        <ellipse cx="480" cy="60"  rx="60" ry="44"  fill="#c47888" transform="rotate(10 480 60)"/>
+        <ellipse cx="680" cy="140" rx="48" ry="36"  fill="#c47888" transform="rotate(-8 680 140)"/>
+        <ellipse cx="200" cy="320" rx="100" ry="62" fill="#c47888" transform="rotate(14 200 320)"/>
+        <ellipse cx="560" cy="340" rx="72" ry="50"  fill="#c47888" transform="rotate(-12 560 340)"/>
+        <ellipse cx="80"  cy="460" rx="56" ry="40"  fill="#c47888" transform="rotate(6 80 460)"/>
+        <ellipse cx="700" cy="440" rx="44" ry="34"  fill="#c47888" transform="rotate(-20 700 440)"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#pig-spot)"/>
+  </svg>
+
+  <main>
+    <nav>
+      <a href="#" class="nav-logo">pig 🐷</a>
+      <a href="#problem">Why</a>
+      <a href="#how">How</a>
+      <a href="#demo">Demo</a>
+      <a href="docs.html">Docs</a>
+      <a href="#install" class="nav-install">Install</a>
+    </nav>
+
+    <!-- ── hero ── -->
+    <section id="hero">
+      <h1>Root out version<br><em>drift</em>.</h1>
+      <p>
+        pig finds packages installed at multiple versions across your pnpm
+        projects and helps you align them — interactively, strategically,
+        and without drama.
+      </p>
+      <div class="hero-actions">
+        <a href="#install" class="btn btn-primary">Get pig</a>
+        <a href="docs.html" class="btn btn-secondary">Command reference →</a>
+      </div>
+
+      <div class="term">
+        <pre><span class="prompt">$</span> <span class="cmd">pig scan</span>
+<span class="out">Found 14 projects across 3 scan paths</span>
+<span class="hi">6 packages have multiple resolved versions</span>
+<span class="out">Estimated potential savings: ~0 B</span>
+
+<span class="prompt">$</span> <span class="cmd">pig</span>
+<span class="out">  ◆ Which package would you like to groom?</span>
+<span class="pkg">  ● lodash         4.16.0 · 4.17.21          9 projects</span>
+<span class="out">    react          17.0.2 · 18.2.0 · 18.3.1  6 projects</span>
+<span class="out">    typescript     5.0.4 · 5.4.5 · 5.8.3     4 projects</span>
+<span class="dim">  ↑↓ navigate   ↵ expand   s skip   d defer   q quit</span></pre>
+      </div>
+    </section>
+
+    <!-- ── problem ── -->
+    <section id="problem">
+      <h2>Every monorepo sprouts<br>its own version of <em style="font-style:italic;color:var(--rust)">everything</em>.</h2>
+      <p>
+        You work across ten projects. They all use React, lodash, TypeScript,
+        and a dozen shared utilities. But each project evolves independently,
+        pinned its dependencies at different times, and now they live in a
+        zoo of conflicting versions.
+      </p>
+      <p>
+        The pnpm store deduplicates within a single install — but it cannot
+        deduplicate across projects that never agreed on a version.
+        Your store grows. Your brains hurt. Nobody wins.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🗂️</div>
+          <h3>Scattered lockfiles</h3>
+          <p>Every project has its own <code>pnpm-lock.yaml</code>. Without a global view, drift is invisible.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔀</div>
+          <h3>Silent version splits</h3>
+          <p>lodash@4.16 and lodash@4.17 coexist quietly in the store. Neither project knows about the other.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <h3>Wasted disk</h3>
+          <p>The content-addressed store cannot reclaim space until all references to a version are gone.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐛</div>
+          <h3>Subtle bugs</h3>
+          <p>Two projects sharing a package at different minor versions can behave differently in confusing ways.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── how ── -->
+    <section id="how">
+      <h2>Scan. Detect. Align. Done.</h2>
+      <p>
+        pig works in four stages. The first two are always free; the last
+        two only happen when you choose to apply changes.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3>1 — Scan</h3>
+          <p>Walk configured scan paths, find every <code>pnpm-lock.yaml</code>, parse all resolved packages.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗺️</div>
+          <h3>2 — Detect</h3>
+          <p>Build a version group map. Surface only packages where two or more distinct versions are resolved.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <h3>3 — Strategise</h3>
+          <p>Choose an alignment target per package: lowest, most-acceptable, a specific project, latest from registry, or a hand-picked version.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>4 — Apply</h3>
+          <p>Update each <code>package.json</code> range, run <code>pnpm install</code>, optionally validate with a test command. Reverts on failure.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── demo ── -->
+    <section id="demo">
+      <h2>Three commands. Deliberately focused.</h2>
+
+      <h3><code>pig scan</code> — read-only audit</h3>
+      <p>Get a quick summary of version drift without changing anything. Safe to run any time.</p>
+
+      <div class="term">
+        <pre><span class="prompt">$</span> <span class="cmd">pig scan --paths ~/work,~/personal</span>
+<span class="out">Found 22 projects across 2 scan paths</span>
+<span class="hi">8 packages have multiple resolved versions</span>
+<span class="out">Estimated potential savings: ~0 B</span></pre>
+      </div>
+
+      <h3 style="margin-top:2.5rem"><code>pig store</code> — store summary</h3>
+      <p>Inspect your pnpm content-addressed store to understand its current footprint.</p>
+
+      <div class="term">
+        <pre><span class="prompt">$</span> <span class="cmd">pig store</span>
+<span class="out">Store path: /Users/you/Library/pnpm/store/v10</span>
+<span class="hi">Total size: 4.3 GB</span>
+<span class="out">Cached files: 187,432 files</span>
+<span class="out">
+Note: the pnpm v10 store uses content-addressable storage.
+Per-package breakdown is not available without pnpm internal metadata.</span></pre>
+      </div>
+
+      <h3 style="margin-top:2.5rem"><code>pig</code> — interactive grooming session</h3>
+      <p>
+        The main event. pig presents each drifting package one at a time
+        and lets you choose an alignment strategy. Changes are queued,
+        reviewed, then applied together.
+      </p>
+
+      <div class="term">
+        <pre><span class="prompt">$</span> <span class="cmd">pig --paths ~/work,~/personal</span>
+
+<span class="out">  ◆ lodash  (2 versions · 9 projects)</span>
+<span class="out">  ◇ Strategy?</span>
+<span class="hi">  ● Align to lowest required       4.16.0  cost: 3</span>
+<span class="out">    Align to most acceptable        4.17.21 cost: 0</span>
+<span class="out">    Align to project X</span>
+<span class="out">    Upgrade to latest (registry)</span>
+<span class="out">    Select specific version</span>
+<span class="warn">    Skip</span>
+<span class="out">    Defer (come back later)</span>
+
+<span class="dim">  ↵ select</span>
+
+<span class="out">  ◇ Strategy?    Align to most acceptable</span>
+<span class="hi">  ✓ Queued lodash → 4.17.21 (3 projects)</span>
+
+<span class="out">  ◆ react  (3 versions · 6 projects)</span>
+<span class="out">  …</span>
+
+<span class="out">  3 changes queued.</span>
+<span class="out">  ◇ Apply all queued changes?  <span class="hi">Yes</span> / No</span>
+
+<span class="out">  Updating /Users/you/work/api...</span>
+<span class="hi">    Done.</span>
+<span class="out">  Updating /Users/you/work/dashboard...</span>
+<span class="hi">    Done.</span>
+<span class="out">  Updating /Users/you/personal/blog...</span>
+<span class="hi">    Done.</span>
+
+<span class="hi">  Complete: 3 succeeded, 0 failed out of 3 projects.</span></pre>
+      </div>
+    </section>
+
+    <!-- ── strategies ── -->
+    <section id="strategies">
+      <h2>Five strategies for every situation.</h2>
+      <p>pig never makes a unilateral decision. You choose how to resolve each package.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Target chosen</th>
+            <th>Network</th>
+            <th>Best for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>lowest</code></td>
+            <td>Lowest version in use</td>
+            <td class="yes">No</td>
+            <td>Maximum compatibility</td>
+          </tr>
+          <tr>
+            <td><code>most-acceptable</code></td>
+            <td>Version satisfying most existing ranges</td>
+            <td class="yes">No</td>
+            <td>Minimise range bumps needed</td>
+          </tr>
+          <tr>
+            <td><code>project</code></td>
+            <td>Version used by a chosen project</td>
+            <td class="yes">No</td>
+            <td>Anchoring to a reference monorepo</td>
+          </tr>
+          <tr>
+            <td><code>latest</code></td>
+            <td><code>dist-tags.latest</code> from registry</td>
+            <td class="no">Yes</td>
+            <td>Staying current</td>
+          </tr>
+          <tr>
+            <td><code>specific</code></td>
+            <td>Hand-picked from full version list</td>
+            <td class="no">Yes</td>
+            <td>Pinning to a known-good version</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── install ── -->
+    <section id="install">
+      <h2>Ready to wrangle your herd?</h2>
+      <p>pig requires Node 22+ and pnpm installed globally.</p>
+
+      <div class="term" style="max-width:500px;margin:0 auto 2rem">
+        <pre><span class="prompt">$</span> <span class="cmd">pnpm add -g pig-cli</span>
+<span class="dim"># or</span>
+<span class="prompt">$</span> <span class="cmd">npm install -g pig-cli</span></pre>
+      </div>
+
+      <h3 style="margin-bottom:.75rem">Configure scan paths</h3>
+      <p>Create <code>~/.pig/config.json</code>:</p>
+
+      <div class="term" style="max-width:500px;margin:0 auto 2rem">
+        <pre><span class="hi">{</span>
+  <span class="warn">"scanPaths"</span><span class="hi">: [</span><span class="pkg">"~/work"</span><span class="hi">,</span> <span class="pkg">"~/personal"</span><span class="hi">]</span><span class="hi">,</span>
+  <span class="warn">"ignore"</span><span class="hi">:</span>    <span class="hi">[</span><span class="pkg">"**/node_modules/**"</span><span class="hi">]</span><span class="hi">,</span>
+  <span class="warn">"validate"</span><span class="hi">:</span>  <span class="pkg">"pnpm test --run"</span>
+<span class="hi">}</span></pre>
+      </div>
+
+      <a href="docs.html" class="btn btn-secondary">Read the full docs →</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>pig is open source — <a href="https://github.com/joeinnes/pig">github.com/joeinnes/pig</a></p>
+  </footer>
+
+</body>
+</html>
